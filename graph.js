@@ -83,6 +83,42 @@ class Graph {
 
     return vals
   }
+
+  //given a starting and ending node find the shortest path between them
+  shortestPath(start, end) {
+    if (start === end) return [start.value];
+
+    const queue = [start];
+    let visited = new Set();
+    let predecessors = {};
+    let path = [];
+
+    while (queue.length){
+      let currentVertex = queue.shift();
+
+      //if the end has been reached, add all stops to the path, and flip the path around
+      if(currentVertex === end) {
+        let stop = predecessors[end.value];
+        while(stop){
+          path.push(stop);
+          stop = predecessors[stop];
+        }
+        path.unshift(end.value);
+        path.reverse();
+        return path
+      }
+
+      visited.add(currentVertex);
+      //iterate through vertex's adjacent to the current vertex adding vertexs that haven't been visited to the queue
+      for(let vertex of currentVertex.adjacent) {
+        if (!visited.has(vertex)) {
+          predecessors[vertex.value] = currentVertex.value;
+          queue.push(vertex);
+        }
+      }
+    }
+  }
+
 }
 
 module.exports = {Graph, Node}
